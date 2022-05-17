@@ -56,8 +56,10 @@ class ViewClient
 
 
         <button type="submit" name="ajout" id="ajout" class="btn btn-primary">Ajouter</button>
-        <button type="reset" name="annuler" id="annuler" class="btn btn-danger">Annuler</button>
+        <button type="reset" name="annuler" id="annuler" class="btn btn-danger"><a href="connexion-client.php">Annuler</a></button>
       </form>
+      <p class="col-md-6 offset-md-3">Déjà inscrit ? Hop c'est par ici >>> <a href="connexion-client.php" class="btn btn-info">Connexion</a></p>
+
     </div>
     <?php
   }
@@ -77,11 +79,65 @@ class ViewClient
         </div>
         <button type="submit" name="connexion" class="btn btn-primary">Connexion</button>
         <button type="reset" name="annuler" class="btn btn-danger">Annuler</button><br>
-        <a href="recup-mdp.php" class="text-info"><em>Mot de passe oublié ?</em></a><br><br>
-        <p>Pas encore inscrit ? Hop c'est par ici >>> <a href="inscription.php" class="btn btn-info">Inscription</a></p>
       </form>
+      <a href="recup-mdp.php" class="text-info col-md-6 offset-md-3"><em>Mot de passe oublié ?</em></a><br><br>
+        <p class="col-md-6 offset-md-3">Pas encore inscrit ? Hop c'est par ici >>> <a href="inscription.php" class="btn btn-info">Inscription</a></p>
     </div>
   <?php
+  }
+  public static function listeClient()
+  {
+      $client = new ModelClient();
+      $liste = $client->listeClient();
+      if (count($liste) > 0) {
+?>
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Prénom</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Numéro tel</th>
+                      <th scope="col">Adresse</th>
+                      <th scope="col">Token</th>
+
+
+                  </tr>
+              </thead>
+              <tbody>
+
+                  <?php
+                  foreach ($liste as $client) {
+                  ?>
+                      <tr>
+                          <th scope="row"><?php echo $client['id'] ?></th>
+                          <td><?php echo $client['nom'] ?></td>
+                          <td><?php echo $client['prenom'] ?></td>
+                          <td><?php echo $client['mail'] ?></td>
+                          <td><?php echo $client['tel'] ?></td>
+                          <td><?php echo $client['adresse'] . " ". $client['ville'] . " " . $client['code_post'] ?></td>
+                          <td><?php echo $client['token'] ?></td>
+                          <td>
+                              <a href="profil-client.php?id=<?php echo $client['id'] ?>" class="btn btn-success">Voir Profil</a>
+                              <a href="modif-client.php?id=<?php echo $client['id'] ?>" class="btn btn-info">Modifier</a>
+                              <a href="supp-client.php?id=<?php echo $client['id'] ?>" class="btn btn-danger">Supprimer</a>
+                          </td>
+                      </tr>
+                  <?php
+                  }
+                  ?>
+              </tbody>
+          </table>
+      <?php
+      } else {
+      ?>
+          <div class="alert alert-danger" role="alert">
+              <p> Aucun client n'existe dans la liste.</p>
+              <a href="accueil-admin.php"><em>Retour</em></a>
+          </div>
+      <?php
+      }
   }
 
   public static function voirProfil($id)

@@ -4,9 +4,9 @@
 session_start();
 
 if (!isset($_SESSION['id'])) {
-    header('Location: connexion-client.php');
-    exit;
-  }
+  header('Location: connexion-client.php');
+  exit;
+}
 
 ?>
 
@@ -25,6 +25,7 @@ if (!isset($_SESSION['id'])) {
   <?php
   require_once "../../view/site/ViewClient.php";
   require_once "../../model/ModelClient.php";
+  require_once "../../model/Utils.php";
 
   ViewClient::profilHeader();  // ici il faut que je fasse un header commun pour les autres controller si je ne suis pas co !
 
@@ -36,8 +37,16 @@ if (!isset($_SESSION['id'])) {
       ViewClient::alert("danger", "L'utilisateur n'existe pas", "profil-client.php");
     }
   } else {
+
     if (isset($_POST['id']) && $contact->voirProfil($_POST['id'])) {
-      if ($contact->modifClient($_POST['id'], $_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['tel'], $_POST['adresse'], $_POST['ville'], $_POST['code_post'])) {        
+
+      // validation coté serveur
+      $donnees = [$_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['tel'], $_POST['adresse'], $_POST['ville'], $_POST['code_post']];
+      $types = ["nom", 'prenom', 'mail', 'tel', 'adresse', 'ville', 'code_post'];
+      $data = Utils::valider($donnees, $types);
+
+      if ($data && ($contact->modifClient($_POST['id'], $_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['tel'], $_POST['adresse'], $_POST['ville'], $_POST['code_post']))) {
+        echo "<h2 class='alert alert-success' >Données valides !</h2>"; // en cas d'insertion de donnees dans la base, il faut utiliser celle de data et non pas de post
         ViewClient::alert("success", "Votre profil a été modifié avec succès", "profil-client.php");
       } else {
         ViewClient::alert("danger", "Echec de la modification", "profil-client.php");

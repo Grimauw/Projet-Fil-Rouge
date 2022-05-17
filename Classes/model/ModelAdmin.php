@@ -1,7 +1,13 @@
 <?php
 require_once "connexion.php";
+// $GLOBALS['adminRole'];
+// $adminRole = [
+//   1 => 'Admin',
+//   2 => 'Commercant',
+//   3 => 'Fournisseur'
+// ];
 
-class ModelClient
+class ModelAdmin
 {
 
   private $id;
@@ -9,52 +15,41 @@ class ModelClient
   private $prenom;
   private $mail;
   private $pass;
-  private $tel;
-  private $adresse;
-  private $ville;
-  private $code_post;
-  private $token;
+  private $role;
 
-  public function __construct($id = null, $nom = null, $prenom = null, $mail = null, $pass = null, $tel = null, $adresse = null, $ville = null, $code_post = null, $token = null)
+
+  public function __construct($id = null, $nom = null, $prenom = null, $mail = null, $pass = null, $role = null)
   {
     $this->id = $id;
     $this->nom = $nom;
     $this->prenom = $prenom;
     $this->mail = $mail;
     $this->pass = $pass;
-    $this->tel = $tel;
-    $this->adresse = $adresse;
-    $this->ville = $ville;
-    $this->code_post = $code_post;
-    $this->token = $token;
+    $this->role = $role;
+
   }
 
 
 
-
-  public  function ajoutUser($nom, $prenom, $mail, $pass, $tel, $adresse, $ville, $code_post)
+  public  function ajoutAdmin($nom, $prenom, $mail, $pass, $role)
   {
     $idcon = connexion();
     $requete = $idcon->prepare("
-      INSERT INTO client VALUES (null, :nom, :prenom, :mail, :pass, :tel, :adresse, :ville, :cod_post,  null)
+      INSERT INTO employe VALUES (null, :nom, :prenom, :mail, :pass, :role)
     ");
     return $requete->execute([
       ':nom' => $nom,
       ':prenom' => $prenom,
       ':mail' => $mail,
       ':pass' => $pass,
-      ':tel' => $tel,
-      ':adresse' => $adresse,
-      ':ville' => $ville,
-      ':cod_post' => $code_post, 
-      
+      ':role' => $role,
     ]);
   }
 
-  public function connexionClient($mail){
+  public function connexionAdmin($mail){
     $idcon = connexion();
     $requete = $idcon->prepare("
-      SELECT * FROM client WHERE mail=:mail
+      SELECT * FROM employe WHERE mail=:mail
     ");
 
       $requete->execute([
@@ -63,21 +58,21 @@ class ModelClient
      return $requete->fetch(PDO::FETCH_ASSOC);     
   }
 
-  public function listeClient()
+  public function listeAdmin()
   {
     $idcon = connexion();
     $requete = $idcon->prepare("
-      SELECT * FROM client
+      SELECT * FROM employe
     ");
     $requete->execute();
     return $requete->fetchAll(PDO::FETCH_ASSOC);
   }
 
-  public function voirProfil($id)
+  public function voirProfilAdmin($id)
   {
     $idcon = connexion();
     $requete = $idcon->prepare("
-      SELECT * FROM client where id=:id;
+      SELECT * FROM employe where id=:id;
     ");
     $requete->execute([
       ':id' => $id,
@@ -85,11 +80,11 @@ class ModelClient
     return $requete->fetch(PDO::FETCH_ASSOC);
   }
 
-  public function suppProfil($id)
+  public function suppProfilAdmin($id)
   {
     $idcon = connexion();
     $requete = $idcon->prepare("
-      DELETE FROM client WHERE id=:id 
+      DELETE FROM employe WHERE id=:id 
     ");
     return $requete->execute(
       [
@@ -98,21 +93,18 @@ class ModelClient
     );
   }
 
-  public function modifClient($id, $nom, $prenom, $mail, $tel, $adresse, $ville, $code_post)
+  public function modifAdmin($id, $nom, $prenom, $mail, $role)
   {
     $idcon = connexion();
     $requet = $idcon->prepare("
-      UPDATE client SET nom = :nom, prenom = :prenom, mail = :mail, tel = :tel, adresse = :adresse, ville = :ville, code_post = :code_post WHERE id = :id
+      UPDATE employe SET nom = :nom, prenom = :prenom, mail = :mail, role = :role WHERE id = :id
     ");
     return $requet->execute([
       ':id' => $id,
       ':nom' => $nom,
       ':prenom' => $prenom,
       ':mail' => $mail,
-      ':tel' => $tel,
-      ':adresse' => $adresse,
-      ':ville' => $ville,
-      ':code_post' => $code_post
+      ':tel' => $role,
     ]);
   }
 
@@ -121,7 +113,7 @@ class ModelClient
   {
     $idcon = connexion();
     $requete = $idcon->prepare("
-      SELECT pass FROM client where mail=:mail;
+      SELECT pass FROM employe where mail=:mail;
     ");
     $requete->execute([
       ':mail' => $mail,
@@ -157,26 +149,10 @@ class ModelClient
   {
     return $this->pass;
   }
-  public function getTel()
+  public function getRole()
   {
-    return $this->tel;
+    return $this->role;
   } 
-  public function getAdresse()
-  {
-    return $this->adresse;
-  }
-  public function getVille()
-  {
-    return $this->ville;
-  }
-  public function getCode_post()
-  {
-    return $this->code_post;
-  } 
-  public function getToken()
-  {
-    return $this->token;
-  }
 
 
 
@@ -205,31 +181,11 @@ class ModelClient
     $this->pass = $pass;
     return $this;
   }
-  public function setTel($tel)
+  public function setRole($role)
   {
-    $this->tel = $tel;
+    $this->role = $role;
     return $this;
-  }
-  public function setAdresse($adresse)
-  {
-    $this->adresse = $adresse;
-    return $this;
-  }
-  public function setVille($ville)
-  {
-    $this->ville = $ville;
-    return $this;
-  }
-  public function setCode_post($code_post)
-  {
-    $this->code_post = $code_post;
-    return $this;
-  }
-  public function setToken($token)
-  {
-    $this->token = $token;
-    return $this;
-  }
+  } 
 }
 
 

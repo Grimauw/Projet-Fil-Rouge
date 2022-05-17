@@ -6,46 +6,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 
-  <title>Inscription</title>
+  <title>Inscription Admin</title>
 </head>
 
 <body>
   <?php
-  require_once "../../view/site/ViewClient.php";
-  require_once "../../model/ModelClient.php";
-  require_once "../../model/Utils.php";
+  require_once "../../view/admin/ViewAdmin.php";
+  require_once "../../model/ModelAdmin.php";
+  require_once "../../view/admin/ViewTemplateAdmin.php";
 
-
-
-  if (isset($_POST['ajout'])) {
+ViewTemplateAdmin::menuAdmin();
+var_dump($_POST);
+// if($_SERVER['REQUEST_METHOD'] == 'POST')  // try avec la méthode de request mais sans succée
+  if ((isset($_POST['ajout']))) {
+    var_dump($_POST['ajout']);
     $pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
-    $user = new ModelClient();
-var_dump($_POST['ajout']);
-    // validation coté serveur
-    $donnees = [$_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['tel'], $_POST['adresse'], $_POST['ville'], $_POST['code_post']];
-    $types = ["nom", 'prenom', 'mail', 'tel', 'adresse', 'ville', 'code_post'];
-    $data = Utils::valider($donnees, $types);
-
-    if ($data && ($user->ajoutUser($_POST['nom'], $_POST['prenom'], $_POST['mail'], $pass, $_POST['tel'], $_POST['adresse'], $_POST['ville'], $_POST['code_post']))) {
-      echo "<h2 class='alert alert-success' >Données valides !</h2>"; // en cas d'insertion de donnees dans la base, il faut utiliser celle de data et non pas de post
-      ?>
+    $user = new ModelAdmin();
+    if (var_dump($user->ajoutAdmin($_POST['nom'], $_POST['prenom'], $_POST['mail'], $pass, $_POST['role']))) { // ici problème d'index a cause de l'input radio ? résolu si je met l'input en checked dans le formu
+    ?>
       <h1>Inscription faite avec succes </h1>
-
-      <a href="connexion-client.php">Connexion</a>
-
+      <a href="connexion-admin.php">Connexion</a>
     <?php
     } else {
     ?>
       <h1>Echec de l'inscription </h1>
-      <a href="inscription.php">Retour</a>
-
-
-  <?php
+      <a href="inscription-admin.php">Retour</a>
+    <?php
     }
-  } else {
-    ViewClient::ajoutUser();
-  }
+  } 
+ 
 
+  
+  else {
+    ViewAdmin::ajoutAdmin();
+  }
+  ViewTemplateAdmin::footer();
   ?>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>

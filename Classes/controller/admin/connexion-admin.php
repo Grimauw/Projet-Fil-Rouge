@@ -1,41 +1,49 @@
 <?php
 session_start();
 
-require_once "../../view/site/ViewClient.php";
-require_once "../../model/ModelClient.php";
-require_once "../../model/Utils.php";
+require_once "../../view/admin/ViewAdmin.php";
+require_once "../../model/ModelAdmin.php";
+require_once "../../view/admin/ViewTemplateAdmin.php";
 
-if (isset($_SESSION['id']) && $_SESSION['role'] === 'user') {
-  header('Location: accueil.php');
+if (isset($_SESSION['id']) && $_SESSION['role'] === 'admin') {
+  header('Location: accueil-admin.php');
   exit;
 }
+/*
+if (isset($_SESSION['id'])) {
+  foreach($adminRole as $role => $valeur) {
+    if ( $role === $_SESSION['role'] ) {
+      header('Location: accueil-admin.php');
+      exit;
+    }
+}
+}
+*/
+
+
 
 if (isset($_POST['connexion'])) {
-  $user = new ModelClient();
-  $userData = $user->connexionClient($_POST['mail']);
-  // validation coté serveur
-  $donnees = [$_POST['mail']];
-  $types = ["mail"];
-  $data = Utils::valider($donnees, $types);
-
-  if ($data && ($userData && password_verify($_POST['pass'], $userData['pass']))) {
+  $user = new ModelAdmin();
+  $userData = $user->connexionAdmin($_POST['mail']);
+  var_dump($_POST);
+  if (var_dump($userData && password_verify($_POST['pass'], $userData['pass']))) {
     $_SESSION['id'] = $userData['id'];
     $_SESSION['nom'] = $userData['nom'];
     $_SESSION['prenom'] = $userData['prenom'];
     $_SESSION['mail'] = $userData['mail'];
-    $_SESSION['tel'] = $userData['tel'];
-    $_SESSION['adresse'] = $userData['adresse'];
-    $_SESSION['ville'] = $userData['ville'];
-    $_SESSION['code_post'] = $userData['code_post'];
-    $_SESSION['role'] = 'user';
-    header('Location: accueil.php');
+    $_SESSION['role'] = "admin";
+      header('Location: accueil-admin.php');
+  
   } else {
-
     // echo "Echec d'authentification";
-    echo "<h2 class='alert alert-danger' >Données non valides !</h2>"; // en cas d'insertion de donnees dans la base, il faut utiliser celle de data et non pas de post
-    ViewClient::alert("danger", "Echec de la connexion", "connexion-client.php");
+    ViewTemplateAdmin::alert("danger", "Echec de la connexion", "connexion-admin.php");
+    var_dump($user);
+    var_dump($userData);
+    var_dump($_SESSION);
+
   }
 } else {
+
 ?>
   <!doctype html>
   <html lang="fr">
@@ -50,7 +58,9 @@ if (isset($_POST['connexion'])) {
 
   <body>
   <?php
-  ViewClient::connexion();
+  ViewTemplateAdmin::menuAdmin();
+  ViewAdmin::connexionAdmin();
+  ViewTemplateAdmin::footer();
 }
 
 
@@ -61,3 +71,6 @@ if (isset($_POST['connexion'])) {
   </body>
 
   </html>
+
+
+  
